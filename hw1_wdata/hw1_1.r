@@ -8,10 +8,7 @@ gpredict = function(dftrain = NULL, dftest = NULL){
 			ret = list(mua = NULL, mub = NULL, s_ab = NULL, s_bb = NULL, predict = NULL)
 			return(ret)
 		}
-		ret=list(mua=0, mub=rep(0, nfeature),
-		s_ab = matrix(0, nrow=1, ncol=nfeature),
-		s_bb=matrix(0, nrow=nfeature, ncol=nfeature),
-		predict=rep(0, n_test))
+		ret = list(mua = NULL, mub = NULL, s_ab = NULL, s_bb = NULL, predict = NULL)
 		return(ret)
 	} 
 
