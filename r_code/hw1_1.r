@@ -1,25 +1,22 @@
 gpredict = function(dftrain = NULL, dftest = NULL){
 	nfeature = ncol(dftest) # number of features
+	nfeature_train = ncol(dftrain) - 1
 	n = nrow(dftrain) # number of training observations
 	n_test = nrow(dftest) # the number of testing observations
 
 	if ( is.null(n) ) {
-		if (is.null(nfeature)) {
-			ret = list(mua = NULL, mub = NULL, s_ab = NULL, s_bb = NULL, predict = NULL)
-			return(ret)
-		}
-		ret = list(mua = NULL, mub = NULL, s_ab = NULL, s_bb = NULL, predict = NULL)
-		return(ret)
+		return(NULL)
 	} 
-
-	dftrain_a = dftrain$life_post_consumer
-	if (is.null(dftrain_a)) {
-		mua = 0
-	} else {
-		mua = mean(dftrain_a) # mean of Xa
+	if ( !is.null(dftest) ) {
+		if ( nfeature != nfeature_train ) {
+			return(NULL)
+		}
 	}
 
-	if ( is.null(nfeature) ) {
+	dftrain_a = dftrain$life_post_consumer
+	mua = mean(dftrain_a) # mean of Xa
+
+	if ( is.null(dftest) ) {
 		dftrain_b = dftrain[, -which(names(dftrain) %in% c("life_post_consumer"))]
 	} else {
 		feature_names = colnames(dftest)
