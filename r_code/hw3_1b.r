@@ -16,20 +16,15 @@ pgm_predict = function(amodel, testdata) {
 	return(as.numeric(prediction))
 }
 
-
-
-
 # ### use for testing data
 
 # load('phonetrain.rdata')
 # load('phonetest1.rdata')
-
 # train2 = list()
 # for(aclass in outclass) {
 # 	train2[[aclass]] = traindata[[aclass]][1:500,]
 # }
 # pgm_train = function(outclass, alldata){
-
 # 	outclass_summary = function(classdata) {
 # 		mu1 = colMeans(classdata)
 # 		sigma1 = cov(classdata)
@@ -42,7 +37,6 @@ pgm_predict = function(amodel, testdata) {
 
 # 	ans = lapply(alldata, function(x) outclass_summary(x))
 # 	return (ans)
-
 # }
 # # model1=pgm_train(outclass, train2)
 # model1=pgm_train(outclass, traindata)
@@ -50,7 +44,6 @@ pgm_predict = function(amodel, testdata) {
 # amodel = model1
 # testdata = testds1_feature[1:50,]
 # #
-
 
 # #density of multivariante normal dist
 # test = t(apply(testdata, 1, function(y) sapply(model1, function(x) dmvnorm(y, x$mu1, x$sigma1))))
