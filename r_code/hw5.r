@@ -37,17 +37,17 @@
 #########
 
 
-rf_carton = function(dsall, folds, testfold, vpos='pos', chi_threshold=0.1, grid_length=20, grid_type='loglinear', rfntree=500, deguglevel=0) {
+rf_carton = function(dsall, folds, testfold, vpos='pos', chi_threshold=0.1, grid_length=20, grid_type='loglinear', rfntree=500, debuglevel=0) {
 	library('randomForest')
-	dsall = ds1
-	folds = cvfold
-	testfold = 1
-	vpos='pos'
-	chi_threshold=0.1
-	grid_length=20
-	grid_type='loglinear'
-	rfntree=500
-	deguglevel=0
+	# dsall = ds1
+	# folds = cvfold
+	# testfold = 1
+	# vpos='pos'
+	# chi_threshold=0.1
+	# grid_length=20
+	# grid_type='loglinear'
+	# rfntree=500
+	# deguglevel=0
 
 	test_idx = folds[[testfold]]
 	if (testfold == 1) {
@@ -60,32 +60,73 @@ rf_carton = function(dsall, folds, testfold, vpos='pos', chi_threshold=0.1, grid
 	tune_ds = dsall[tune_idx,]
 	sub_train_ds = dsall[-c(test_idx, tune_idx),]
 
-	feature_select = filter_chisq(sub_train_ds, ypos=vpos, chi_threshold = chi_threshold)
+	#### tuning mtry #####
+	f_select = filter_chisq(sub_train_ds, ypos=vpos, chi_threshold = chi_threshold)
 
 	m_min=2
-	m_max = length(feature_select$colpos)
+	m_max = length(f_select$colpos)
 	if (grid_type == 'equal') {
 		grids = unique(round(seq(m_min, m_max, length=grid_length )))
 	} else if (grid_type == 'loglinear') {
 		grids = unique(round(exp(seq(log(m_min), log(m_max), length=grid_length))))
 	}
 
+	count_f1 = function(p, r) {
+		return (2*p*r/(p+r))
+	}
 
-	return (list(mgrids=, f1_all= , best_m= , test= , fselect=))
+	get_f1 = function(grids_idx) {
+		temp = grids[grids_idx]
+		output.forest = randomForest(x=sub_train_ds[,f_select$colpos], y=sub_train_ds[,1], xtest=tune_ds[,f_select$colpos], ytest=tune_ds[,1], ntree=rfntree, mtry=temp)
+		con_mat = output.forest$test$confusion[,1:2]
+		# cat(con_mat,"\n")
+		precision = con_mat[vpos, vpos]/sum(con_mat[, vpos])
+		recall = con_mat[vpos, vpos]/sum(con_mat[vpos, ])
+		f1 = count_f1(precision, recall)
+		# cat(f1)
+
+		return (f1)
+	}
+
+	# set.seed(5555)
+	# fff = vector(mode="numeric", length=0)
+	# for (i in 1:length(grids)){
+	# 	ff = get_f1(i)
+	# 	fff = c(fff,ff)
+	# }
+
+	# set.seed(5555)
+	f1s = sapply(seq(length(grids)), function(x) get_f1(x))
+
+	best_mtry = grids[which.max(f1s)]
+	#############
+	
+	### train ###
+	fselect = filter_chisq(train_ds, ypos=vpos, chi_threshold = chi_threshold)
+
+	output.forest = randomForest(x=train_ds[,fselect$colpos], y=train_ds[,1], xtest=test_ds[,fselect$colpos], ytest=test_ds[,1], ntree=rfntree, mtry=best_mtry)
+	con_mat = output.forest$test$confusion[,1:2]
+	test = list()
+	test$precision = con_mat[vpos, vpos]/sum(con_mat[, vpos])
+	test$recall = con_mat[vpos, vpos]/sum(con_mat[vpos, ])
+	test$f1 = count_f1(test$precision, test$recall)
+
+	#############
+
+	return (list(mgrids=grids, f1_all=f1s , best_m=best_mtry , test=test , fselect=fselect))
 }
 
-randomForest
-output.forest = randomForest(x=sub_train_ds[,-1],y=sub_train_ds[,1],xtest=tune_ds[,-1],ytest=[,], ntree=2, mtry=2)
 
-
-
-###########
 
 
 
 ###########
-load('hw5ds1.rdata')
-set.seed(5555)
-rftest=rf_carton(ds1, cvfold, testfold=1, debuglevel=0)
+
+
+
+###########
+# load('hw5ds1.rdata')
+# set.seed(5555)
+# rftest=rf_carton(ds1, cvfold, testfold=1, debuglevel=0)
 
 
