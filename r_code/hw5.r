@@ -77,7 +77,7 @@ rf_carton = function(dsall, folds, testfold, vpos='pos', chi_threshold=0.1, grid
 
 	get_f1 = function(grids_idx) {
 		temp = grids[grids_idx]
-		output.forest = randomForest(x=sub_train_ds[,f_select$colpos], y=sub_train_ds[,1], xtest=tune_ds[,f_select$colpos], ytest=tune_ds[,1], ntree=rfntree, mtry=temp)
+		output.forest = randomForest(x=sub_train_ds[, f_select$colpos], y=sub_train_ds[,1], xtest=tune_ds[,f_select$colpos], ytest=tune_ds[,1], ntree=rfntree, mtry=temp)
 		con_mat = output.forest$test$confusion[,1:2]
 		# cat(con_mat,"\n")
 		precision = con_mat[vpos, vpos]/sum(con_mat[, vpos])
@@ -97,7 +97,7 @@ rf_carton = function(dsall, folds, testfold, vpos='pos', chi_threshold=0.1, grid
 
 	# set.seed(5555)
 	f1s = sapply(seq(length(grids)), function(x) get_f1(x))
-
+ 
 	best_mtry = grids[which.max(f1s)]
 	#############
 	
@@ -125,7 +125,7 @@ rf_carton = function(dsall, folds, testfold, vpos='pos', chi_threshold=0.1, grid
 
 
 ###########
-# load('hw5ds1.rdata')
+# h
 # set.seed(5555)
 # rftest=rf_carton(ds1, cvfold, testfold=1, debuglevel=0)
 
