@@ -68,7 +68,7 @@ hmm_predict = function(model, allsent, sepchar = " ", addsmooth = 1){
 				if ((tag_seq[char_idx] == "M") | (tag_seq[char_idx] == "E")) {
 					cut_str = paste(cut_str, char_list[char_idx], sep="", collapse="")
 				} else {
-					cut_str = paste(cut_str, char_list[char_idx], collapse='')
+					cut_str = paste(cut_str, char_list[char_idx], sep=sepchar, collapse="")
 				}	
 			}
 		}
